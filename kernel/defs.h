@@ -9,6 +9,18 @@ struct sleeplock;
 struct stat;
 struct superblock;
 
+///////////////////////////////////////////////////////////////////////////////
+
+// pci.c
+void            pciinit(void);
+
+// vga.c
+void            vgainit(void);
+
+///////////////////////////////////////////////////////////////////////////////
+
+
+
 // bio.c
 void            binit(void);
 struct buf*     bread(uint, uint);

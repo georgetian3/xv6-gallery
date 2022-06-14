@@ -30,6 +30,17 @@ kvmmake(void)
   // virtio mmio disk interface
   kvmmap(kpgtbl, VIRTIO0, VIRTIO0, PGSIZE, PTE_R | PTE_W);
 
+  /////////////////////////////////////////////////////////////////////////////
+  // PCI-E ECAM (configuration space) for VGA
+  kvmmap(kpgtbl, 0x30000000L, 0x30000000L, 0x10000000, PTE_R | PTE_W);
+  // VGA framebuffer.
+  kvmmap(kpgtbl, 0x40000000L, 0x40000000L, 0x1000000L, PTE_R | PTE_W);
+  // VGA IO ports.
+  kvmmap(kpgtbl, 0x3000000, 0x3000000, 0x10000, PTE_R | PTE_W);
+  // CLINT
+  kvmmap(kpgtbl, CLINT, CLINT, 0x10000, PTE_R | PTE_W);
+  /////////////////////////////////////////////////////////////////////////////
+
   // PLIC
   kvmmap(kpgtbl, PLIC, PLIC, 0x400000, PTE_R | PTE_W);
 

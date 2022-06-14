@@ -5,6 +5,12 @@ _*
 *.asm
 *.sym
 *.img
+*.aux
+*.log
+*.exe
+*.out
+.syncthing*
+.vscode
 vectors.S
 bootblock
 entryother

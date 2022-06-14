@@ -95,3 +95,16 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+uint64
+sys_setpixel(void)
+{
+  static int x, y, c;
+  argint(0, &x);
+  argint(1, &y);
+  argint(2, &c);
+  *(char*)(0x40000000L + 320 * y + x) = c;
+  return 0;
+}
+///////////////////////////////////////////////////////////////////////////////
