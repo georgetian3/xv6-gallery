@@ -40,9 +40,7 @@ pciinit(void)
       // bit 1 : memory access enable
       // bit 2 : enable mastering
       base[1] = 7;
-      printf("before sync\n");
       __sync_synchronize();
-      printf("after sync\n");
 
       for(int i = 0; i < 6; i++){
         uint32 old = base[4+i];

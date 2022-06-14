@@ -60,6 +60,16 @@ If the file contains changes from the original, the changes are enclosed by two 
 - user.h
 - usys.pl
 
+# Building
+
+Instructions are given at https://pdos.csail.mit.edu/6.828/2021/tools.html
+
+The project has been tested on WSL Ubuntu 22.04, namely by issueing:
+
+`sudo apt-get install git build-essential gdb-multiarch qemu-system-misc gcc-riscv64-linux-gnu binutils-riscv64-linux-gnu `
+
+Furthermore, a VNC viewer is required to view the display. We recommend https://github.com/TigerVNC/tigervnc/
+
 # Original Readme
 
 xv6 is a re-implementation of Dennis Ritchie's and Ken Thompson's Unix
