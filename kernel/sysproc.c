@@ -97,6 +97,12 @@ sys_uptime(void)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+int hex_to_index(int hex) {
+  static int div = 256 * 256;
+  return hex / div;
+}
+
 uint64
 sys_setpixel(void)
 {
