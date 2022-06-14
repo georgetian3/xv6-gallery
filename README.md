@@ -14,31 +14,51 @@ Most of the source code in this repository remains unchanged from the original
  ┃ ┃ ┗ ...  
  ┃ ┗ 📂midsem // Mid-semester report LaTeX source  
  ┃ ┃ ┗ ...  
- ┣ 📂kernel
- ┃ ┣
- ┃ ┣
- ┃ ┣
- ┃ ┣
- ┃ ┣
- ┃ ┣
- ┃ ┣
- ┃ ┣
- ┃ ┣
- ┃ ┣
+ ┣ 📂kernel 
+ ┃ ┣ 
+ ┃ ┣ 
+ ┃ ┣ 
+ ┃ ┣ 
+ ┃ ┣ 
+ ┃ ┣ 
+ ┃ ┣ 
+ ┃ ┣ 
+ ┃ ┣ 
+ ┃ ┣ 
  ┃ ┗ ...
- ┣ 📂user
- ┃ ┣
- ┃ ┣
- ┃ ┣
- ┃ ┣
- ┃ ┣
- ┃ ┣
- ┃ ┣
- ┃ ┣
+ ┣ 📂user 
+ ┃ ┣ 
+ ┃ ┣ 
+ ┃ ┣ 
+ ┃ ┣ 
+ ┃ ┣ 
+ ┃ ┣ 
+ ┃ ┣ 
+ ┃ ┣ 
  ┃ ┗ ...
  ┗ ...
 
+# Changes
 
+If the file contains changes from the original, the changes are enclosed by two lines of 80 comment characters (`#` or `/`).
+
+## `/`
+- Makefile
+
+## `/kernel`
+- defs.h
+- main.c
+- pci.c
+- syscall.h
+- syscall.c
+- sysproc.c
+- vga.c
+- vm.c
+
+## `/user`
+- gallery.c
+- user.h
+- usys.pl
 
 # Original Readme
 
