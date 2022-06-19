@@ -3,10 +3,6 @@
 #include "user.h"
 
 
-#include "gallery.h"
-
-
-
 struct __attribute__((__packed__)) BitmapFileHeader {
     uint16 bfType;
     uint32 bfSize;
