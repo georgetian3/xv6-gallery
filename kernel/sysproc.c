@@ -106,11 +106,18 @@ int hex_to_index(int hex) {
 uint64
 sys_setpixel(void)
 {
-  static int x, y, c;
+  static int x, y, r, g, b;
   argint(0, &x);
   argint(1, &y);
-  argint(2, &c);
-  *(char*)(0x40000000L + 320 * y + x) = c;
+  argint(2, &r);
+  argint(3, &g);
+  argint(4, &b);
+  r -= r % 64;
+  g /= 8;
+  g -= g % 4;
+  b /= 64;
+  int i = r + g + b;
+  *(char*)(0x40000000L + 320 * y + x) = i;
   return 0;
 }
 ///////////////////////////////////////////////////////////////////////////////

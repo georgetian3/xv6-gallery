@@ -7,15 +7,15 @@
 
 
 
-struct BitmapFileHeader {
+struct __attribute__((__packed__)) BitmapFileHeader {
     uint16 bfType;
     uint32 bfSize;
     uint16 bfReserved1;
     uint16 bfReserved2;
     uint32 bfOffBits;
-};
+} fh;
 
-struct BitmapInfoHeader {
+struct __attribute__((__packed__)) BitmapInfoHeader {
     uint32 biSize;
     uint32 biWidth;
     uint32 biHeight;
@@ -27,17 +27,23 @@ struct BitmapInfoHeader {
     uint32 biYPelsPerMeter;
     uint32 biClrUsed;
     uint32 biClrImportant;
-};
+} ih;
+
+void
+print_bitmap(struct BitmapFileHeader fh, struct BitmapInfoHeader ih)
+{
+    printf("%d %d %d %d %d\n", fh.bfType, fh.bfSize, fh.bfReserved1, fh.bfReserved2, fh.bfOffBits);
+    printf("%d %d %d %d %d %d %d %d %d %d %d\n", ih.biSize, ih.biWidth, ih.biHeight, ih.biPlanes, ih.biBitCount, ih.biCompression, ih.biSizeImages, ih.biXPelsPerMeter, ih.biYPelsPerMeter, ih.biClrUsed, ih.biClrImportant);
+}
 
 struct Pixel {
-    char r;
-    char g;
     char b;
+    char g;
+    char r;
 };
 
 struct Image {
-    struct BitmapFileHeader fh;
-    struct BitmapInfoHeader ih;
+    int width, height;
     struct Pixel* pixels;
 };
 
@@ -51,21 +57,28 @@ struct Image readbitmap(const char* filename) {
 
     struct Image img;
 
-    if (read(fd, &(img.fh), sizeof(struct BitmapFileHeader)) == -1 ||
-        read(fd, &(img.ih), sizeof(struct BitmapInfoHeader)) == -1    ) {
+    if (read(fd, &fh, sizeof(struct BitmapFileHeader)) == -1 ||
+        read(fd, &ih, sizeof(struct BitmapInfoHeader)) == -1 ) {
         printf("Invalid bitmap headers\n");
         exit(0);
     }
 
-    int padding = img.ih.biWidth % 4;
-    img.pixels = malloc(img.ih.biWidth * img.ih.biHeight);
+    print_bitmap(fh, ih);
+
+    img.height = ih.biHeight;
+    img.width  = ih.biWidth;
+
+    printf("%d %d\n", img.height, img.width);
+
+    int padding = img.width % 4;
+    img.pixels = sbrk(img.width * img.height * sizeof(struct Pixel));
 
     struct Pixel discard[4];
 
-
+    int test;
     
-    for (int y = 0; y < img.ih.biHeight; y++) {
-        if (read(fd, &(img.pixels[img.ih.biWidth * y]), img.ih.biWidth * sizeof(struct Pixel)) == -1 ||
+    for (int y = img.height - 1; y >= 0; y--) {
+        if (read(fd, img.pixels + y * img.width, img.width * sizeof(struct Pixel)) == -1 ||
             read(fd, discard, padding) == -1) {
             printf("Invalid bitmap\n");
             exit(0);
@@ -180,18 +193,18 @@ gui_init() {
 
     for (int i = 0; i < 320; i++) {
         for (int j = 0; j < 3; j++) {
-            setpixel(i, j, 255);
+            setpixel(i, j, 255, 255, 255);
         }
         for (int j = 197; j < 200; j++) {
-            setpixel(i, j, 255);
+            setpixel(i, j, 255, 255, 255);
         }
     }
     for (int i = 0; i < 200; i++) {
         for (int j = 0; j < 3; j++) {
-            setpixel(j, i, 255);
+            setpixel(j, i, 255, 255, 255);
         }
         for (int j = 317; j < 320; j++) {
-            setpixel(j, i, 255);
+            setpixel(j, i, 255, 255, 255);
         }
     }
 
@@ -203,8 +216,8 @@ heart()
 {
     for (int x = 140; x < 160; x++) {
         double slope = 1;
-        setpixel(x, x * slope, 255);
-        setpixel(320 - x, x * slope, 255);
+        setpixel(x, x * slope, 255, 255, 255);
+        setpixel(320 - x, x * slope, 255, 255, 255);
     }
 
     int xs[] = {160, 158, 156, 153, 150, 147, 144, 142, 140, 140};
@@ -212,27 +225,52 @@ heart()
     int n = 10;
 
     for (int i = 0; i < n; i++) {
-        setpixel(xs[i], ys[i], 255);
-        setpixel(xs[i] + 20, ys[i], 255);
+        setpixel(xs[i], ys[i], 0, 0, 0);
+        setpixel(xs[i] + 20, ys[i], 0, 0, 0);
     }
 
+}
+
+void
+testcolors()
+{
+    for (int i = 0; i < 256; i++) {
+        for (int j = 0; j < 200; j++) {
+            setpixel(i, j, i, j, i * j % 256);
+        }
+    }
 }
 
 
 int main(int argc, char** argv) {
 
-    
+    //testcolors();
+
+    /*
     if (argc != 2) {
         printf("Specify a filename!\n");
         heart();
         exit(0);
     }
+    */
+    //gui_init();
 
-    gui_init();
+
+    struct Image img = readbitmap("test.bmp");
 
 
-    struct Image img = imgopen(argv[1]);
+    int x = 320 < img.width ? 320 : img.width;
+    int y = 200 < img.height ? 200 : img.height;
 
+    for (int i = 0; i < y; i++) {
+        for (int j = 0; j < x; j++) {
+            struct Pixel p = img.pixels[i * img.width + j];
+            setpixel(j, i, p.r, p.g, p.b);
+        }
+    }
+
+
+    printf("Done\n");
 
     exit(0);
 

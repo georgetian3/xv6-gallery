@@ -143,12 +143,12 @@ UPROGS=\
 
 ###############################################################################
 UPROGS += \
-	$U/_gallery \
+	$U/_gallery
 
 
 
-fs.img: mkfs/mkfs $U/bitmap.bmp $(UPROGS)
-	mkfs/mkfs fs.img $(UPROGS)
+fs.img: mkfs/mkfs test.bmp $(UPROGS)
+	mkfs/mkfs fs.img test.bmp $(UPROGS)
 ###############################################################################
 
 
