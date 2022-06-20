@@ -6,7 +6,7 @@ Image viewer for xv6
 
 # Changes
 
-If the file contains changes from the original, the changes are enclosed by two lines of 80 comment characters (`#` or `/`).
+The majority of the repository structure is unchanged from the original repository. If the file contains changes from the original, the changes are enclosed by two long lines comment characters (`#` or `/`). If any of the files below do not contain such comment lines, then it is entirely new.
 
 ## `/`
 - Makefile
