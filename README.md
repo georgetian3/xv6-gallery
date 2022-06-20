@@ -4,40 +4,6 @@
 
 Image viewer for xv6
 
-## Repository structure
-
-Most of the source code in this repository remains unchanged from the original 
-
-📦xv6-gallery  
- ┣ 📂docs  
- ┃ ┣ 📂final // Final report LaTeX source  
- ┃ ┃ ┗ ...  
- ┃ ┗ 📂midsem // Mid-semester report LaTeX source  
- ┃ ┃ ┗ ...  
- ┣ 📂kernel 
- ┃ ┣ 
- ┃ ┣ 
- ┃ ┣ 
- ┃ ┣ 
- ┃ ┣ 
- ┃ ┣ 
- ┃ ┣ 
- ┃ ┣ 
- ┃ ┣ 
- ┃ ┣ 
- ┃ ┗ ...
- ┣ 📂user 
- ┃ ┣ 
- ┃ ┣ 
- ┃ ┣ 
- ┃ ┣ 
- ┃ ┣ 
- ┃ ┣ 
- ┃ ┣ 
- ┃ ┣ 
- ┃ ┗ ...
- ┗ ...
-
 # Changes
 
 If the file contains changes from the original, the changes are enclosed by two lines of 80 comment characters (`#` or `/`).
