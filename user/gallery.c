@@ -10,7 +10,6 @@ struct __attribute__((__packed__)) BitmapFileHeader {
     uint16 bfReserved2;
     uint32 bfOffBits;
 } fh;
-
 struct __attribute__((__packed__)) BitmapInfoHeader {
     uint32 biSize;
     uint32 biWidth;
@@ -24,13 +23,11 @@ struct __attribute__((__packed__)) BitmapInfoHeader {
     uint32 biClrUsed;
     uint32 biClrImportant;
 } ih;
-
 struct Pixel {
     char b;
     char g;
     char r;
 };
-
 struct Image {
     int width, height;
     struct Pixel* pixels;
@@ -42,14 +39,17 @@ int fd;
 
 char framebuffer[WIDTH * HEIGHT];
 
-const char help[] =
-    "\n\nGallery\n\
+const char help[] = "\n\nGallery\n\
          x: exit\n\
          h: help\n\
          r: reset view\n\
          \n";
 
-
+int xpos = 0;
+int ypos = 0;
+double zoom = 1;
+bool hflipped = false;
+bool vflipped = true;
 
 void imgread() {
 
@@ -88,20 +88,15 @@ void imgread() {
     }
 
 }
-
-void rotate(int direction){
-
-}
-
-
 void set_pixel(int x, int y, struct Pixel p) {
-    return img.pixels[y * img.width + x] = p;
+    img.pixels[y * img.width + x] = p;
 }
-
 struct Pixel get_pixel(int x, int y) {
     return img.pixels[y * img.width + x];
 }
+void rotate(int direction){
 
+}
 void vflip() {
     int mid = img.width / 2;
     struct Pixel temp;
@@ -113,7 +108,6 @@ void vflip() {
         }
     }
 }
-
 void hflip() {
     int mid = img.height / 2;
     struct Pixel temp;
@@ -126,14 +120,6 @@ void hflip() {
     }
 }
 
-
-void testcolors() {
-    for (int i = 0; i < WIDTH; i++) {
-        for (int j = 0; j < HEIGHT; j++) {
-            setpixel(i, j, i, j, (i + j) % 256);
-        }
-    }
-}
 
 
 int draw(int x1, int y1, int x2, int y2) {
@@ -157,7 +143,13 @@ int draw(int x1, int y1, int x2, int y2) {
 };
 
 
-
+void testcolors() {
+    for (int i = 0; i < WIDTH; i++) {
+        for (int j = 0; j < HEIGHT; j++) {
+            setpixel(i, j, i, j, (i * j) % 256);
+        }
+    }
+}
 void eventloop() {
     setmsgstate(1);
     char c = 255;
