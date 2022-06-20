@@ -5,12 +5,6 @@ _*
 *.asm
 *.sym
 *.img
-*.aux
-*.log
-*.exe
-*.out
-.syncthing*
-.vscode
 vectors.S
 bootblock
 entryother
@@ -21,4 +15,6 @@ mkfs
 kernel/kernel
 user/usys.S
 .gdbinit
+
+.vscode
 *.backup

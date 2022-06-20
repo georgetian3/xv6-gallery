@@ -146,12 +146,9 @@ UPROGS=\
 UPROGS += \
 	$U/_gallery
 
-
-
 fs.img: mkfs/mkfs test.bmp $(UPROGS)
 	mkfs/mkfs fs.img test.bmp $(UPROGS)
 ###############################################################################
-
 
 -include kernel/*.d user/*.d
 
@@ -169,18 +166,15 @@ GDBPORT = $(shell expr `id -u` % 5000 + 25000)
 QEMUGDB = $(shell if $(QEMU) -help | grep -q '^-gdb'; \
 	then echo "-gdb tcp::$(GDBPORT)"; \
 	else echo "-s -p $(GDBPORT)"; fi)
-
-
-###############################################################################
-CPUS := 4
-###############################################################################
+ifndef CPUS
+CPUS := 3
+endif
 
 QEMUOPTS = -machine virt -bios none -kernel $K/kernel -m 128M -smp $(CPUS) -nographic
 QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 ###############################################################################
 QEMUOPTS += -device VGA -vnc localhost:0
-QEUMOPSS += -device virtio-mouse-pci
 ###############################################################################
 qemu: $K/kernel fs.img
 	$(QEMU) $(QEMUOPTS)
