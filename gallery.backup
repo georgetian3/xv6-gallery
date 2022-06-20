@@ -1,0 +1,6 @@
+void
+print_bitmap(struct BitmapFileHeader fh, struct BitmapInfoHeader ih)
+{
+    printf("%d %d %d %d %d\n", fh.bfType, fh.bfSize, fh.bfReserved1, fh.bfReserved2, fh.bfOffBits);
+    printf("%d %d %d %d %d %d %d %d %d %d %d\n", ih.biSize, ih.biWidth, ih.biHeight, ih.biPlanes, ih.biBitCount, ih.biCompression, ih.biSizeImages, ih.biXPelsPerMeter, ih.biYPelsPerMeter, ih.biClrUsed, ih.biClrImportant);
+}

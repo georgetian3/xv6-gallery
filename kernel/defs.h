@@ -17,6 +17,13 @@ void            pciinit(void);
 // vga.c
 void            vgainit(void);
 
+// msg.c
+void            msginit(void);
+void            putmsg(char);
+extern int      msgstate;
+struct Node;
+struct Queue;
+
 ///////////////////////////////////////////////////////////////////////////////
 
 

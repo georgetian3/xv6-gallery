@@ -1,4 +1,4 @@
-from distinctipy import distinctipy
+""" from distinctipy import distinctipy
 from PIL import Image
 
 # number of colours to generate
@@ -49,4 +49,15 @@ for i in range(256):
     y = g // 8
     y -= y % 4
     z = b // 64
-    print(x + y + z)
+    print(x + y + z) """
+
+w = 20
+h = 10
+base = ('0' * w + '\n') * h
+print(base)
+
+w1 = 10
+w2 = 10
+
+if w / h > w1 / w2:
+    

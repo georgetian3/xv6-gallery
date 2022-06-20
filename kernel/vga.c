@@ -26,7 +26,7 @@
 //#include "vga.h"
 //#include "font.h"
 
-static volatile uint8 * const VGA_BASE = (uint8*) 0x3000000L;
+static volatile uint8 * const VGA0 = (uint8*) 0x3000000L;
 volatile uint8 __attribute__((unused)) discard; // write to this to discard
 
 
@@ -73,68 +73,67 @@ void write_regs(unsigned char *regs)
 {
 	unsigned i;
   /* write MISCELLANEOUS reg */
-	VGA_BASE[VGA_MISC_WRITE] = *regs;
+	VGA0[VGA_MISC_WRITE] = *regs;
 	regs++;
   /* write SEQUENCER regs */
 	for(i = 0; i < VGA_NUM_SEQ_REGS; i++)
 	{
-		VGA_BASE[VGA_SEQ_INDEX] = i;
-		VGA_BASE[VGA_SEQ_DATA] = *regs;
+		VGA0[VGA_SEQ_INDEX] = i;
+		VGA0[VGA_SEQ_DATA] = *regs;
 		regs++;
 	}
   /* unlock CRTC registers */
-	VGA_BASE[VGA_CRTC_INDEX] = 0x03;
-	VGA_BASE[VGA_CRTC_DATA] = VGA_BASE[VGA_CRTC_DATA] | 0x80;
-	VGA_BASE[VGA_CRTC_INDEX] = 0x11;
-	VGA_BASE[VGA_CRTC_DATA] = VGA_BASE[VGA_CRTC_DATA] & ~0x80;
+	VGA0[VGA_CRTC_INDEX] = 0x03;
+	VGA0[VGA_CRTC_DATA] = VGA0[VGA_CRTC_DATA] | 0x80;
+	VGA0[VGA_CRTC_INDEX] = 0x11;
+	VGA0[VGA_CRTC_DATA] = VGA0[VGA_CRTC_DATA] & ~0x80;
   /* make sure they remain unlocked */
 	regs[0x03] |= 0x80;
 	regs[0x11] &= ~0x80;
   /* write CRTC regs */
 	for(i = 0; i < VGA_NUM_CRTC_REGS; i++)
 	{
-		VGA_BASE[VGA_CRTC_INDEX] = i;
-		VGA_BASE[VGA_CRTC_DATA] = *regs;
+		VGA0[VGA_CRTC_INDEX] = i;
+		VGA0[VGA_CRTC_DATA] = *regs;
 		regs++;
 	}
   /* write GRAPHICS CONTROLLER regs */
 	for(i = 0; i < VGA_NUM_GC_REGS; i++)
 	{
-		VGA_BASE[VGA_GC_INDEX] = i;
-		VGA_BASE[VGA_GC_DATA] = *regs;
+		VGA0[VGA_GC_INDEX] = i;
+		VGA0[VGA_GC_DATA] = *regs;
 		regs++;
 	}
   /* write ATTRIBUTE CONTROLLER regs */
 	for(i = 0; i < VGA_NUM_AC_REGS; i++)
 	{
-		(void)VGA_BASE[VGA_INSTAT_READ];
-		VGA_BASE[VGA_AC_INDEX] = i;
-		VGA_BASE[VGA_AC_WRITE] = *regs;
+		(void)VGA0[VGA_INSTAT_READ];
+		VGA0[VGA_AC_INDEX] = i;
+		VGA0[VGA_AC_WRITE] = *regs;
 		regs++;
 	}
     /* lock 16-color palette and unblank display */
-	(void)VGA_BASE[VGA_INSTAT_READ];
-	VGA_BASE[VGA_AC_INDEX] = 0x20;
+	(void)VGA0[VGA_INSTAT_READ];
+	VGA0[VGA_AC_INDEX] = 0x20;
 }
 
 void
 vgainit(void)
 {
-  printf("initializing VGA..\n");
+  printf("Begin vgainit\n");
 
   write_regs(g_320x200x256);
-  VGA_BASE[0x3c8] = 0;
+  VGA0[0x3c8] = 0;
   for (int r = 0; r < 64; r += 8) {
     for (int g = 0; g < 64; g += 8) {
       for (int b = 0; b < 64; b += 16) {
-        VGA_BASE[0x3c9] = r;
-        VGA_BASE[0x3c9] = g;
-        VGA_BASE[0x3c9] = b;
+        VGA0[0x3c9] = r;
+        VGA0[0x3c9] = g;
+        VGA0[0x3c9] = b;
       }
     }
   }
 
-  printf("completed VGA initialization.\n");
-  //dump_vga_config();
+  printf("End   vgainit\n");
 
 }

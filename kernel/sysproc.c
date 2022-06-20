@@ -7,6 +7,12 @@
 #include "spinlock.h"
 #include "proc.h"
 
+///////////////////////////////////////////////////////////////////////////////
+#include "vga.h"
+#include "msg.h"
+///////////////////////////////////////////////////////////////////////////////
+
+
 uint64
 sys_exit(void)
 {
@@ -97,27 +103,70 @@ sys_uptime(void)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-
-int hex_to_index(int hex) {
-  static int div = 256 * 256;
-  return hex / div;
-}
-
 uint64
 sys_setpixel(void)
 {
-  static int x, y, r, g, b;
+  static int x, y, i;
+  static int rgb[3];
+
   argint(0, &x);
   argint(1, &y);
-  argint(2, &r);
-  argint(3, &g);
-  argint(4, &b);
-  r -= r % 64;
-  g /= 8;
-  g -= g % 4;
-  b /= 64;
-  int i = r + g + b;
-  *(char*)(0x40000000L + 320 * y + x) = i;
+
+  // pixel must be within the screen bounds
+  if (x < 0 || y < 0 || x >= WIDTH || y >= HEIGHT)
+    return -1;
+
+  for (i = 0; i < 3; i++) {
+    // reading rgb values
+    argint(i + 2, rgb + i);
+    // checking bounds
+    if (rgb[i] < 0) {
+      rgb[i] = 0;
+    } else if (rgb[i] > 255) {
+      rgb[i] = 255;
+    }
+  }
+
+  // converting RGB values to the index of the closest color
+  rgb[0] -= rgb[0] % 64;
+  rgb[1] /= 8;
+  rgb[1] -= rgb[1] % 4;
+  rgb[2] /= 64;
+  *(char*)(FRAMEBUFFER + WIDTH * y + x) = rgb[0] + rgb[1] + rgb[2];
   return 0;
 }
+
+
+char
+sys_getmsg()
+{
+  static char c;
+  acquire(&msglock);
+  if (front == back) {
+    release(&msglock);
+    return -1;
+  }
+  c = msgqueue[front];
+  increase(front);
+
+  release(&msglock);
+
+  return c;
+
+}
+
+uint64
+sys_setmsgstate(void)
+{
+  acquire(&msglock);
+  argint(0, &msgstate);
+  // empty the queue if messaging was enabled
+  if (msgstate == 1) {
+    front = 0;
+    back = 0;
+  }
+  release(&msglock);
+  return 0;
+}
+
 ///////////////////////////////////////////////////////////////////////////////

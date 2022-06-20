@@ -5,6 +5,7 @@
 #include "riscv.h"
 #include "defs.h"
 #include "fs.h"
+#include "vga.h"
 
 /*
  * the kernel's page table.
@@ -34,11 +35,9 @@ kvmmake(void)
   // PCI-E ECAM (configuration space) for VGA
   kvmmap(kpgtbl, 0x30000000L, 0x30000000L, 0x10000000, PTE_R | PTE_W);
   // VGA framebuffer.
-  kvmmap(kpgtbl, 0x40000000L, 0x40000000L, 0x1000000L, PTE_R | PTE_W);
+  kvmmap(kpgtbl, FRAMEBUFFER, FRAMEBUFFER, 0x1000000L, PTE_R | PTE_W);
   // VGA IO ports.
-  kvmmap(kpgtbl, 0x3000000, 0x3000000, 0x10000, PTE_R | PTE_W);
-  // CLINT
-  kvmmap(kpgtbl, CLINT, CLINT, 0x10000, PTE_R | PTE_W);
+  kvmmap(kpgtbl, VGA0, VGA0, 0x10000, PTE_R | PTE_W);
   /////////////////////////////////////////////////////////////////////////////
 
   // PLIC

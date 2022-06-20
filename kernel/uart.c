@@ -75,6 +75,7 @@ uartinit(void)
   WriteReg(IER, IER_TX_ENABLE | IER_RX_ENABLE);
 
   initlock(&uart_tx_lock, "uart");
+  msginit();
 }
 
 // add a character to the output buffer and tell the
@@ -184,7 +185,13 @@ uartintr(void)
     int c = uartgetc();
     if(c == -1)
       break;
-    consoleintr(c);
+    ///////////////////////////////////////////////////////////////////////////
+    if (msgstate == 1) {
+      putmsg(c);
+    } else {
+      consoleintr(c);
+    }
+    ///////////////////////////////////////////////////////////////////////////
   }
 
   // send buffered characters.

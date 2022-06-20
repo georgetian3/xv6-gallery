@@ -11,13 +11,12 @@
 #include "spinlock.h"
 #include "proc.h"
 #include "defs.h"
-
+#include "vga.h"
 
 void
 pciinit(void)
 {
-  // we'll place the VGA framebuffer at this address.
-  uint64 vga_framebuffer = 0x40000000L;
+  printf("Begin pciinit\n");
 
   // qemu -machine virt puts PCIe config space here.
   uint32  *ecam = (uint32 *) 0x30000000L;
@@ -55,10 +54,11 @@ pciinit(void)
 
       // tell the VGA to reveal its framebuffer at
       // physical address 0x40000000.
-      base[4+0] = vga_framebuffer;
+      base[4] = FRAMEBUFFER;
 
-      vgainit(/*(char*)vga_framebuffer*/);
+      vgainit();
     }
   }
+  printf("End   pciinit\n");
 
 }
