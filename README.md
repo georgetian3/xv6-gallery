@@ -26,7 +26,7 @@ The majority of the repository structure is unchanged from the original reposito
 - user.h
 - usys.pl
 
-# Building
+# Build
 
 Instructions are given at https://pdos.csail.mit.edu/6.828/2021/tools.html
 
