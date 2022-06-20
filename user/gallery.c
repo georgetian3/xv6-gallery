@@ -40,6 +40,8 @@ const char* filename;
 struct Image img;
 int fd;
 
+char framebuffer[WIDTH * HEIGHT];
+
 const char help[] =
     "\n\nGallery\n\
          x: exit\n\
@@ -92,8 +94,12 @@ void rotate(int direction){
 }
 
 
-int pixel_index(struct Image image, int x, int y) {
-    return 0;
+void set_pixel(int x, int y, struct Pixel p) {
+    return img.pixels[y * img.width + x] = p;
+}
+
+struct Pixel get_pixel(int x, int y) {
+    return img.pixels[y * img.width + x];
 }
 
 void vflip() {
@@ -101,49 +107,25 @@ void vflip() {
     struct Pixel temp;
     for (int y = 0; y < img.height; y++) {
         for (int x = 0; x < mid; x++) {
-            //line = img.width * y;
-            temp = img.pixels[pixel_index(img, x, y)];
-            img.pixels[pixel_index(img, x, y)] = img.pixels[pixel_index(img, img.width - x - 1, y)];
-            img.pixels[pixel_index(img, img.width - x - 1, y)] = temp;
+            temp = get_pixel(x, y);
+            set_pixel(img.width - x - 1, y, get_pixel(x, y));
+            set_pixel(img.width - x - 1, y, temp);
         }
     }
-
 }
 
 void hflip() {
     int mid = img.height / 2;
     struct Pixel temp;
-    for (int x =0; x<img.width; x++){
-        for (int y=0; y<mid; y++){
-            temp = img.pixels[pixel_index(img, x, y)];
-            img.pixels[pixel_index(img, x, y)] = img.pixels[pixel_index(img, x, img.height - y -1)];
-            img.pixels[pixel_index(img, x, img.height - y -1)] = temp;
+    for (int x = 0; x < img.width; x++){
+        for (int y = 0; y < mid; y++){
+            temp = get_pixel(x, y);
+            set_pixel(x, y, get_pixel(x, img.height - y - 1));
+            set_pixel(x, img.height - y - 1, temp);
         }
     }
-    //test
 }
 
-
-
-void guiinit() {
-    for (int i = 0; i < WIDTH; i++) {
-        for (int j = 0; j < 3; j++) {
-            setpixel(i, j, 255, 255, 255);
-        }
-        for (int j = 197; j < HEIGHT; j++) {
-            setpixel(i, j, 255, 255, 255);
-        }
-    }
-    for (int i = 0; i < HEIGHT; i++) {
-        for (int j = 0; j < 3; j++) {
-            setpixel(j, i, 255, 255, 255);
-        }
-        for (int j = 317; j < WIDTH; j++) {
-            setpixel(j, i, 255, 255, 255);
-        }
-    }
-
-}
 
 void testcolors() {
     for (int i = 0; i < WIDTH; i++) {
@@ -154,22 +136,24 @@ void testcolors() {
 }
 
 
-void draw(int x1, int x2, int y1, int y2) {
-    double ratio = img.width * 1.0 / img.height;
-    int width, height;
+int draw(int x1, int y1, int x2, int y2) {
+    if (x1 > x2 || y1 > y2) {
+        return -1;
+    }
+    int width = x2 - x1;
+    int height = y2 - y1;
+    double scale, ratio = width * 1.0 / height;
     if (ratio >= RATIO) {
-        width = WIDTH;
-        height = WIDTH / ratio;
+        scale = width * 1.0 / WIDTH;
     } else {
-        width = HEIGHT / ratio;
-        height = HEIGHT;
+        scale = height * 1.0 / HEIGHT;
     }
     if (img.height < HEIGHT && img.width < WIDTH) {
         //stretch(img, width, height);
     } else {
        // shrink(img, width, height);
     }
-    
+    return 0;
 };
 
 
@@ -202,10 +186,8 @@ int main(int argc, char** argv) {
 
     filename = argv[1];
 
-    guiinit();
-
     imgread(filename);
-    //draw();
+    draw(0, 0, img.width, img.height);
 
     
 

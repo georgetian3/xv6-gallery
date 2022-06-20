@@ -107,7 +107,7 @@ extern uint64 sys_uptime(void);
 ///////////////////////////////////////////////////////////////////////////////
 extern uint64 sys_setpixel(void);
 extern uint64 sys_setlistener(void);
-extern char   sys_getmsg(void);
+extern uint64 sys_getmsg(void);
 extern uint64 sys_setmsgstate(void);
 ///////////////////////////////////////////////////////////////////////////////
 

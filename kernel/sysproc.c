@@ -137,10 +137,10 @@ sys_setpixel(void)
 }
 
 
-char
+uint64
 sys_getmsg()
 {
-  static char c;
+  static int c;
   acquire(&msglock);
   if (front == back) {
     release(&msglock);
