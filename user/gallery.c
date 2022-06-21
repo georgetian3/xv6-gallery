@@ -272,12 +272,12 @@ void eventloop() {
                 xpos -= pan;
                 draw();
                 break;
-            case 0x64: // d, rotate left
+            case 'd':
                 printf("Rotating left\n");
                 lrotate();
                 draw();
                 break;
-            case 0x66: // f, rotate right
+            case 'f':
                 printf("Rotating right\n");
                 rrotate();
                 draw();
