@@ -5,6 +5,7 @@
 
 #define min(a, b) (a < b ? a : b)
 #define max(a, b) (a < b ? b : a)
+#define bound(x, l, h) (min(max(x, l), h))
 #define abs(x)    (x < 0 ? -x : x)
 
 const int halfwidth = WIDTH / 2;
@@ -49,6 +50,10 @@ int round(double n) {
     return i + 1;
 }
 
+struct Pixel* pa;
+struct Pixel* pb;
+bool a = true;
+
 const char* filename;
 struct Image img;
 int fd;
@@ -57,8 +62,14 @@ char framebuffer[WIDTH * HEIGHT];
 
 const char help[] = "\n\nGallery\n\
          x: exit\n\
-         h: help\n\
+         h: flip horizontally\n\
+         v: flip vertically\n\
          r: reset view\n\
+         i: zoom in\n\
+         o: zoom out\n\
+         d: rotate left\n\
+         f: rotate right\n\
+         up, down, left, right arrows: pan\n\
          \n";
 
 void imgread() {
@@ -82,7 +93,9 @@ void imgread() {
     img.width  = ih.biWidth;
 
     int padding = img.width % 4;
-    img.pixels = (struct Pixel*)sbrk(img.width * img.height * sizeof(struct Pixel));
+    pa = sbrk(img.width * img.height * sizeof(struct Pixel));
+    pb = sbrk(img.width * img.height * sizeof(struct Pixel));
+    img.pixels = pa;
 
     struct Pixel discard[4];
 
@@ -110,14 +123,11 @@ void set_pixel(int x, int y, struct Pixel p) {
     img.pixels[y * img.width + x] = p;
 }
 struct Pixel get_pixel(int x, int y) {
+    static struct Pixel black = {0, 0, 0};
     if (!inbound(x, y)) {
-        printf("get_pixel error\n");
-        exit(0);
+        return black;
     } 
     return img.pixels[y * img.width + x];
-}
-void rotate(int direction){
-
 }
 void hflip() {
     int mid = img.width / 2;
@@ -141,71 +151,58 @@ void vflip() {
         }
     }
 }
+void lrotate() {
+    struct Pixel* new_pixels = a ? pb : pa;
+    a = !a;
+    for (int i = 0; i < img.width; i++) {
+        for (int j = 0; j < img.height; j++) {
+            new_pixels[i * img.height + j] = get_pixel(i, j);
+        }
+    }
+    img.pixels = new_pixels;
+    int temp = img.width;
+    img.width = img.height;
+    img.height = temp;
+}
+void rrotate() {
+    struct Pixel* new_pixels = a ? pb : pa;
+    a = !a;
+    for (int i = 0; i < img.width; i++) {
+        for (int j = 0; j < img.height; j++) {
+            new_pixels[i * img.height + j] = get_pixel(i, j);
+        }
+    }
+    img.pixels = new_pixels;
+    int temp = img.width;
+    img.width = img.height;
+    img.height = temp;
+}
 
 
 int xpos = 0;
 int ypos = 0;
-double zoom = 1;
+int zoom = 1;
 
 
 void draw() {
-    double ratio = img.width * 1.0 / img.height;
-    double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-    double scale;
-    if (ratio >= RATIO) {
-        x1 = img.width * (1 - 1 / zoom) / 2 + xpos;
-        x2 = img.width - x1;
-        scale = WIDTH * 1.0 / (x2 - x1);
-        double new_height = img.height * scale;
-        if (new_height > HEIGHT) {
-            y1 = (new_height - HEIGHT) * 0.5 / scale;
-            y2 = img.height - y1;
-        }
-        y1 += ypos;
-        y2 += ypos;
-    } else {
-        y1 = img.height * (1 - 1 / zoom) / 2 + ypos;
-        y2 = img.height - y1;
-        scale = HEIGHT * 1.0 / (y2 - y1);
-        double new_width = img.width * scale;
-        if (new_width > HEIGHT) {
-            x1 = round((new_width - WIDTH) * 0.5 / scale);
-            x2 = img.width - x1;
-        }
-        x1 += xpos;
-        x2 += xpos;
-    }
-    printf("xpos %d ypos %d x1 %d y1 %d x2 %d y2 %d\n", xpos, ypos, x1, y1, x2, y2);
-    
-
-    struct Pixel p;
-    for (int i = 0; i < WIDTH; i++) {
-        for (int j = 0; j < HEIGHT; j++) {
-            int x = x1 + i / scale;
-            int y = y1 + j / scale;
-            if (!inbound(x, y)) {
-                setpixel(i, j, 0, 0, 0);
-            } else {
-                p = get_pixel(x, y);
-                setpixel(i, j, p.r, p.g, p.b);
-            }
-        }
-    }
-    return;
-    for (int i = 0; i < img.width; i++) {
-        for (int j = 0; j < img.height; j++) {
-            int x = i;
-            int y = j;
-            if (x >= 0 && y >= 0 && x < WIDTH && y < HEIGHT) {
-                p = get_pixel(i, j);
-                setpixel(x, y, p.r, p.b, p.g);
+    static int i, j, k, l, xmax, ymax;
+    static struct Pixel p;
+    xmax = WIDTH / zoom;
+    ymax = HEIGHT / zoom;
+    for (i = 0; i < xmax; ++i) {
+        for (j = 0; j < ymax; ++j) {
+            p = get_pixel(xpos + i, ypos + j);
+            for (k = 0; k < zoom; ++k) {
+                for (l = 0; l < zoom; ++l) {
+                    setpixel(i * zoom + k, j * zoom + l, p.r, p.g, p.b);
+                }
             }
         }
     }
 
 };
 
-double zoom_scale = 1.2;
+
 
 void testcolors() {
     for (int i = 0; i < WIDTH; i++) {
@@ -214,6 +211,9 @@ void testcolors() {
         }
     }
 }
+
+int pan = 8;
+
 void eventloop() {
     setmsgstate(1);
     char msg = 0;
@@ -222,7 +222,6 @@ void eventloop() {
         if (msg == 0) {
             continue;
         }
-        //printf("%x\n", msg);
         switch (msg) {
             case 'r': // reset
                 xpos = 0;
@@ -232,48 +231,57 @@ void eventloop() {
                 draw();
                 break;
             case 'h':
+                printf("Flipping horizontally\n");
                 hflip();
                 draw();
                 break;
             case 'v':
+                printf("Flipping vertically\n");
                 vflip();
                 draw();
                 break;
             case 'i':
                 printf("Zooming in\n");
-                zoom *= zoom_scale;
+                zoom *= 2;
                 draw();
                 break;
             case 'o':
-                printf("Zooming out\n");
-                zoom /= zoom_scale;
-                draw();
+                if (zoom > 1) {
+                    printf("Zooming out\n");
+                    zoom /= 2;
+                    draw();
+                }
                 break;
             case 0x41: // up
-                ypos += 5;
+                printf("Panning up\n");
+                ypos -= pan;
                 draw();
                 break;
             case 0x42: // down
-                ypos -= 5;
+                printf("Panning down\n");
+                ypos += pan;
                 draw();
                 break;
             case 0x43: // right
-                xpos += 5;
+                printf("Panning right\n");
+                xpos += pan;
                 draw();
                 break;
             case 0x44: //left
-                xpos -= 5;
+                printf("Panning left\n");
+                xpos -= pan;
                 draw();
                 break;
             case 0x64: // d, rotate left
-                rotate(1);
+                printf("Rotating left\n");
+                lrotate();
                 draw();
                 break;
             case 0x66: // f, rotate right
-                rotate(0);
+                printf("Rotating right\n");
+                rrotate();
                 draw();
                 break;
-
         }
         
     }
@@ -298,13 +306,11 @@ int main(int argc, char** argv) {
     filename = argv[1];
 
     imgread(filename);
-    printf("img.width %d img.height %d\n", img.width, img.height);
+    //printf("img.width %d img.height %d\n", img.width, img.height);
     draw();
 
-    
 
     eventloop();
-
 
     close(fd);
     
