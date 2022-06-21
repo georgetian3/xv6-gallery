@@ -3,14 +3,6 @@
 #include "../kernel/vga.h"
 #include "user.h"
 
-#define min(a, b) (a < b ? a : b)
-#define max(a, b) (a < b ? b : a)
-#define bound(x, l, h) (min(max(x, l), h))
-#define abs(x)    (x < 0 ? -x : x)
-
-const int halfwidth = WIDTH / 2;
-const int halfheight = HEIGHT / 2;
-
 struct __attribute__((__packed__)) BitmapFileHeader {
     uint16 bfType;
     uint32 bfSize;
@@ -212,9 +204,9 @@ void testcolors() {
     }
 }
 
-int pan = 8;
 
 void eventloop() {
+    static const int pan = 8;
     setmsgstate(1);
     char msg = 0;
     while (msg != 'x') {
@@ -306,7 +298,7 @@ int main(int argc, char** argv) {
     filename = argv[1];
 
     imgread(filename);
-    //printf("img.width %d img.height %d\n", img.width, img.height);
+
     draw();
 
 
