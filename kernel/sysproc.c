@@ -113,18 +113,20 @@ sys_setpixel(void)
   argint(1, &y);
 
   // pixel must be within the screen bounds
-  if (x < 0 || y < 0 || x >= WIDTH || y >= HEIGHT)
-    return -1;
-
+  if (x < 0 || y < 0 || x >= WIDTH || y >= HEIGHT) {
+    printf("setpixel error");
+    exit(0);
+  }
+  
   for (i = 0; i < 3; i++) {
     // reading rgb values
     argint(i + 2, rgb + i);
     // checking bounds
-    if (rgb[i] < 0) {
+/*     if (rgb[i] < 0) {
       rgb[i] = 0;
     } else if (rgb[i] > 255) {
       rgb[i] = 255;
-    }
+    } */
   }
 
   // converting RGB values to the index of the closest color
@@ -144,7 +146,7 @@ sys_getmsg()
   acquire(&msglock);
   if (front == back) {
     release(&msglock);
-    return -1;
+    return 0;
   }
   c = msgqueue[front];
   increase(front);
