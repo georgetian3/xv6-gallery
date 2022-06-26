@@ -16,20 +16,23 @@ int front = 0;
 int back = 0;
 
 struct spinlock msglock;
-void msginit() {
-    initlock(&msglock, "msg");
+void
+msginit()
+{
+  initlock(&msglock, "msg");
 }
 
-void putmsg(char c) {
+void
+putmsg(char c)
+{
+  acquire(&msglock);
 
-    acquire(&msglock);
+  msgqueue[back] = c;
+  increase(back);
+  if(front == back)
+  {
+    increase(front);
+  }
 
-    msgqueue[back] = c;
-    increase(back);
-    if (front == back) {
-        increase(front);
-    }
-    
-    release(&msglock);
-
+  release(&msglock);
 }
