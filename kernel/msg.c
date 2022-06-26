@@ -11,7 +11,7 @@
 
 
 char msgqueue[NMSG]; // queue using circular array
-int msgstate = 0;
+int listening = 0;
 int front = 0;
 int back = 0;
 

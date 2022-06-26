@@ -20,7 +20,7 @@ void            vgainit(void);
 // msg.c
 void            msginit(void);
 void            putmsg(char);
-extern int      msgstate;
+extern int      listening;
 struct Node;
 struct Queue;
 

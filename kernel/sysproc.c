@@ -161,9 +161,9 @@ uint64
 sys_listenmsgs(void)
 {
   acquire(&msglock);
-  argint(0, &msgstate);
+  argint(0, &listening);
   // empty the queue if messaging was enabled
-  if (msgstate == 1) {
+  if (listening == 1) {
     front = 0;
     back = 0;
   }

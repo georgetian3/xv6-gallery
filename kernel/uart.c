@@ -186,7 +186,7 @@ uartintr(void)
     if(c == -1)
       break;
     ///////////////////////////////////////////////////////////////////////////
-    if (msgstate == 1) {
+    if (listening == 1) {
       putmsg(c);
     } else {
       consoleintr(c);
