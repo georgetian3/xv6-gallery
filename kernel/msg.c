@@ -11,18 +11,11 @@
 
 
 char msgqueue[NMSG]; // queue using circular array
-
-
-
 int msgstate = 0;
 int front = 0;
 int back = 0;
 
-
-
 struct spinlock msglock;
-
-
 void msginit() {
     initlock(&msglock, "msg");
 }
@@ -40,4 +33,3 @@ void putmsg(char c) {
     release(&msglock);
 
 }
-

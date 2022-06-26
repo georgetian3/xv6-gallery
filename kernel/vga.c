@@ -124,16 +124,17 @@ vgainit(void)
 
   write_regs(g_320x200x256);
   VGA0[0x3c8] = 0;
-  for (int r = 0; r < 64; r += 8) {
-    for (int g = 0; g < 64; g += 8) {
-      for (int b = 0; b < 64; b += 16) {
+  for (int r = 0; r < 64; r += 8)
+  {
+    for (int g = 0; g < 64; g += 8)
+	{
+      for (int b = 0; b < 64; b += 16)
+	  {
         VGA0[0x3c9] = r;
         VGA0[0x3c9] = g;
         VGA0[0x3c9] = b;
       }
     }
   }
-
   printf("End   vgainit\n");
-
 }

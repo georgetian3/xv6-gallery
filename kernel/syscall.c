@@ -106,9 +106,8 @@ extern uint64 sys_write(void);
 extern uint64 sys_uptime(void);
 ///////////////////////////////////////////////////////////////////////////////
 extern uint64 sys_setpixel(void);
-extern uint64 sys_setlistener(void);
 extern uint64 sys_getmsg(void);
-extern uint64 sys_setmsgstate(void);
+extern uint64 sys_listenmsgs(void);
 ///////////////////////////////////////////////////////////////////////////////
 
 static uint64 (*syscalls[])(void) = {
@@ -136,7 +135,7 @@ static uint64 (*syscalls[])(void) = {
 ///////////////////////////////////////////////////////////////////////////////
 [SYS_setpixel] sys_setpixel,
 [SYS_getmsg] sys_getmsg,
-[SYS_setmsgstate] sys_setmsgstate,
+[SYS_listenmsgs] sys_listenmsgs,
 ///////////////////////////////////////////////////////////////////////////////
 };
 

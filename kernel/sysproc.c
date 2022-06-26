@@ -158,7 +158,7 @@ sys_getmsg()
 }
 
 uint64
-sys_setmsgstate(void)
+sys_listenmsgs(void)
 {
   acquire(&msglock);
   argint(0, &msgstate);
