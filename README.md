@@ -1,5 +1,3 @@
-[中文](https://github.com/georgetian3/xv6-gallery/blob/main/README.zh.md)
-
 # xv6-gallery
 
 Image viewer for xv6
